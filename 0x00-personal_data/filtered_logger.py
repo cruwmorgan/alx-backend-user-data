@@ -3,11 +3,34 @@
     Regex-ing
 """
 import logging
+import mysql.connector
+import os
 import re
 from typing import List, Tuple
 
 
 PII_FIELDS = ("name", "email", "phone", "ssn", "password")
+
+
+def get_db() -> mysql.connector.connection.MySQLConnection:
+    """Get a point of connection toward the database
+
+        Return:
+            a connector to the database
+    """
+    username = os.getenv('PERSONAL_DATA_DB_USERNAME', 'root')
+    passw = os.getenv('PERSONAL_DATA_DB_PASSWORD', '')
+    hosting = os.getenv('PERSONAL_DATA_DB_HOST', 'localhost')
+    db = os.getenv('PERSONAL_DATA_DB_NAME')
+
+    medb = mysql.connector.connect(
+        host=hosting,
+        username=username,
+        password=passw,
+        database=db
+    )
+
+    return medb
 
 
 def get_logger() -> logging.Logger:
@@ -76,3 +99,7 @@ class RedactingFormatter(logging.Formatter):
                                   record.getMessage(), self.SEPARATOR)
 
         return (super(RedactingFormatter, self).format(record))
+
+
+if __name__ == '__main__':
+    main()
