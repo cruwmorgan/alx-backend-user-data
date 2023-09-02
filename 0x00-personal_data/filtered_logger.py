@@ -22,5 +22,36 @@ def filter_datum(fields: List, redaction: str,
         Return:
             String with string obfuscated
     """
-    pattern = f'({separator.join(fields)})=[^{separator}]+'
-    return re.sub(pattern, f'\\1={redaction}', message)
+    for field in fields:
+        message = re.sub(f'{field}=.+?{separator}',
+                      f'{field}={redaction}{separator}', message)
+
+    return message
+
+
+class RedactingFormatter(logging.Formatter):
+    """ Redacting Formatter class
+        """
+
+    REDACTION = "***"
+    FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
+    SEPARATOR = ";"
+
+    def __init__(self, fields):
+        super(RedactingFormatter, self).__init__(self.FORMAT)
+        self.fields = fields
+
+    def format(self, record: logging.LogRecord) -> str:
+        """
+            Set the format of the record
+
+            Args:
+                record: Log record of a event
+
+            Return:
+                The function overloaded to make a new log with all items
+        """
+        record.msg = filter_datum(self.fields, self.REDACTION,
+                                  record.getMessage(), self.SEPARATOR)
+
+        return (super(RedactingFormatter, self).format(record))
