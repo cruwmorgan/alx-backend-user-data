@@ -7,6 +7,27 @@ import re
 from typing import List, Tuple
 
 
+PII_FIELDS = ("name", "email", "phone", "ssn", "password")
+
+
+def get_logger() -> logging.Logger:
+    """
+        Return:
+            returns a logging.Logger object
+    """
+    log: logging.Logger = logging.getLogger('user_data')
+    log.propagate = False
+
+    stream_handler: logging.StreamHandler = logging.StreamHandler()
+    stream_handler.setLevel(logging.INFO)
+    formatter = logging.Formatter((RedactingFormatter(fields=PII_FIELDS)))
+    stream_handler.formatter(formatter)
+
+    log.addHandler(stream_handler)
+
+    return log
+
+
 def filter_datum(fields: List, redaction: str,
                  message: str, separator: str) -> str:
     """
