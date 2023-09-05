@@ -51,7 +51,7 @@ def get_logger() -> logging.Logger:
     return log
 
 
-def filter_datum(fields: List, redaction: str,
+def filter_datum(fields: List[str], redaction: str,
                  message: str, separator: str) -> str:
     """
         Filter and obfuscated the string
