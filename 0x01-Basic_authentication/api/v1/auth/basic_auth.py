@@ -59,9 +59,7 @@ class BasicAuth(Auth):
 
         return data_decode.decode('utf-8')
 
-
-    def extract_user_credentials(
-                                 self,
+    def extract_user_credentials(self,
                                  decoded_base64_authorization_header: str
                                  ) -> (str, str):
         """
