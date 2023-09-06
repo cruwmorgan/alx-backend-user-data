@@ -56,10 +56,10 @@ class Auth:
         if request is None:
             return None
 
-        if (request.headers.get('Authorization')) is None:
+        auth_header = request.headers.get('Authorization', None)
+        if auth_header is None:
             return None
-
-        return request.headers.get('Authorization', None)
+        return auth_header
 
     def current_user(self, request=None) -> TypeVar('User'):
         """
