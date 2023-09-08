@@ -10,7 +10,7 @@ from models.user_session import UserSession
 class SessionDBAuth(SessionExpAuth):
     """ Session Auth Class """
     def create_session(self, user_id=None):
-         """
+        """
             Make a new Session to Database
 
             Args:
@@ -20,7 +20,6 @@ class SessionDBAuth(SessionExpAuth):
                 Session ID
         """
         session_id = super().create_session(user_id)
-
         if session_id is None:
             return None
 
