@@ -3,6 +3,7 @@
     A seesion clss
 """
 from api.v1.auth.auth import Auth
+from models.user import User
 from typing import Dict, TypeVar
 from uuid import uuid4, UUID
 
@@ -39,3 +40,16 @@ class SessionAuth(Auth):
         user_id: str = self.user_id_by_session_id.get(session_id)
 
         return user_id
+
+    def current_user(self, request=None):
+        """Gets a User based on session id
+            Args:
+                request: to lookup
+            Return:
+                a user
+        """
+        session_id: str = self.session_cookie(request)
+        user_id: str = self.user_id_for_session_id(session_id)
+        user: TypeVar('User') = User.get(user_id)
+
+        return user
