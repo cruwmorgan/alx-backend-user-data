@@ -42,10 +42,7 @@ class Auth:
             ValueError """
             raise ValueError(f"User {email} already exists")
         except NoResultFound:
-            pass
-        # If not, hash the password with _hash_password
-        hashed_password = _hash_password(password)
-        # Save the user to the database using self._db
-        user = self._db.add_user(email, hashed_password)
-        # Return the User object
+            passwd: str = _hash_password(password)
+            user = self._db.add_user(email, passwd)
+
         return user
