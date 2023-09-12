@@ -62,14 +62,15 @@ class DB:
         if not kwargs:
             raise InvalidRequestError
 
-        cols_keys = User.__table__.columns.keys()
-        for key in kwargs.keys():
-            if key not in cols_keys:
+        for k in kwargs.keys():
+            if not hasattr(User, k):
                 raise InvalidRequestError
+        try:
+            user = self._session.query(User).filter_by(**kwargs).first()
+        except InvalidRequestError:
+            raise InvalidRequestError
 
-        users = self._session.query(User).filter_by(**kwargs).first()
-
-        if users is None:
+        if user is None:
             raise NoResultFound
 
-        return users
+        return user
