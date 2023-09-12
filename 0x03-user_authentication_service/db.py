@@ -9,6 +9,9 @@ from sqlalchemy.orm.session import Session
 
 from user import Base, User
 
+from sqlalchemy.exc import InvalidRequestError
+from sqlalchemy.orm.exc import NoResultFound
+
 
 class DB:
     """DB class
@@ -42,8 +45,31 @@ class DB:
             Return:
                 User ID created
         """
-        new_user = User(email=email, hashed_password=hashed_password)
-        self._session.add(new_user)
+        user = User(email=email, hashed_password=hashed_password)
+        self._session.add(user)
         self._session.commit()
 
-        return new_user
+        return user
+
+    def find_user_by(self, **kwargs) -> User:
+        """Get user from DB
+            Args:
+                kwargs: Arbitrary keyword arguments
+            Return:
+                first row found in the users table as filtered by the
+                method’s input arguments
+        """
+        if not kwargs:
+            raise InvalidRequestError
+
+        cols_keys = User.__table__.columns.keys()
+        for key in kwargs.keys():
+            if key not in cols_keys:
+                raise InvalidRequestError
+
+        users = self._session.query(User).filter_by(**kwargs).first()
+
+        if users is None:
+            raise NoResultFound
+
+        return users
