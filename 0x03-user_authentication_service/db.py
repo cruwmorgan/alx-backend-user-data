@@ -36,11 +36,11 @@ class DB:
             Create a new user
 
             Args:
-                email: Text email
-                hashed_password: Password hashed
+                email: String email to add
+                hashed_password: Password to add
 
             Return:
-                User created
+                User ID created
         """
         new_user = User(email=email, hashed_password=hashed_password)
         self._session.add(new_user)
