@@ -133,3 +133,23 @@ class Auth:
         # Update the user object in the database with a null session ID to
         # destroy the session - update it to None
         self._db.update_user(user_id, session_id=None)
+
+    def get_reset_password_token(self, email: str) -> str:
+        """ Generate a token
+            Args:
+                email: user email
+            Return:
+                UUId token
+        """
+        try:
+            user = self._db.find_user_by(email=email)
+        except NoResultFound:
+            user = None
+        # If no user is found with specified email address, raise a ValueError
+        if user is None:
+            raise ValueError()
+        # Generate a new password reset token & update the user's record in db
+        reset_token = _generate_uuid()
+        self._db.update_user(user.id, reset_token=reset_token)
+        # Return the generated password reset token
+        return reset_token
