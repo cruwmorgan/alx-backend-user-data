@@ -7,8 +7,8 @@ from sqlalchemy.orm.exc import NoResultFound
 from auth import Auth
 
 
-app = Flask(__name__)
 AUTH = Auth()
+app = Flask(__name__)
 
 
 @app.route('/', methods=['GET'], strict_slashes=False)
@@ -69,6 +69,20 @@ def logout() -> str:
     AUTH.destroy_session(user.id)
     # Redirect to the home route
     return redirect("/")
+
+
+@app.route('/profile', methods=['GET'], strict_slashes=False)
+def my_profile() -> str:
+    """ a profile function """
+    # get session id from cookie
+    session_id = request.cookies.get("session_id")
+    # Retrieve the user associated with the session ID
+    user = AUTH.get_user_from_session_id(session_id)
+    # If no user is found, abort the request with a 403 Forbidden error
+    if user is None:
+        abort(403)
+    # Return the user's email as a JSON payload
+    return jsonify({"email": user.email})
 
 
 if __name__ == "__main__":
