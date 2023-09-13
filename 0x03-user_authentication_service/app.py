@@ -11,13 +11,13 @@ app = Flask(__name__)
 AUTH = Auth()
 
 
-@app.route('/', methods=['GET'])
+@app.route('/', methods=['GET'], strict_slashes=False)
 def hello() -> str:
     """ Greeting in French """
     return jsonify({"message": "Bienvenue"})
 
 
-@app.route('/users', methods=['POST'])
+@app.route('/users', methods=['POST'], strict_slashes=False)
 def new_register() -> str:
     """ Create a new user """
     try:
@@ -35,6 +35,24 @@ def new_register() -> str:
     msg = {"email": user.email, "message": "user created"}
 
     return jsonify(msg)
+
+
+@app.route('/sessions', methods=['POST'], strict_slashes=False)
+def new_login() -> str:
+    """ a login function"""
+    # Get user credentials from form data
+    email, password = request.form.get("email"), request.form.get("password")
+    # Check if the user's credentials are valid
+    if not AUTH.valid_login(email, password):
+        abort(401)
+    # Create a new session for the user
+    session_id: str = AUTH.create_session(email)
+    # Construct a response with a JSON payload
+    response = jsonify({"email": email, "message": "logged in"})
+    # Set a cookie with the session ID on the response
+    response.set_cookie("session_id", session_id)
+    # Return the response
+    return response
 
 
 if __name__ == "__main__":
