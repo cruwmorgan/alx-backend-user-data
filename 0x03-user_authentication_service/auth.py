@@ -153,3 +153,26 @@ class Auth:
         self._db.update_user(user.id, reset_token=reset_token)
         # Return the generated password reset token
         return reset_token
+
+    def update_password(self, reset_token: str, password: str) -> None:
+        """ cretae hash password and update user
+            Args:
+                reset_token: a token
+                password: a new password
+            Return:
+                None
+        """
+        # Find user associated with reset_token
+        try:
+            user = self._db.find_user_by(reset_token=reset_token)
+        except NoResultFound:
+            # If no user found with given reset_token, raise ValueError
+            raise ValueError("Invalid reset token")
+        # Hash the new password
+        new_hashed_password = _hash_password(password)
+        # Update the user's hashed password and the reset_token field to None
+        self._db.update_user(
+            user.id,
+            hashed_password=new_hashed_password,
+            reset_token=None,
+        )
