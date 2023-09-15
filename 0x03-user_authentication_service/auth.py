@@ -3,11 +3,14 @@
     Auth module
 """
 import bcrypt
+import logging
 from db import DB
 from typing import Union
 from uuid import uuid4
 from user import User
 from sqlalchemy.orm.exc import NoResultFound
+
+logging.disable(logging.INFO)
 
 
 def _hash_password(password: str) -> bytes:
