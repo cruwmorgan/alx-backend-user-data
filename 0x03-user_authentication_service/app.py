@@ -2,9 +2,12 @@
 """
     A Flask APp
 """
+import logging
 from flask import Flask, jsonify, request, abort, redirect, make_response
 from sqlalchemy.orm.exc import NoResultFound
 from auth import Auth
+
+logging.disable(logging.INFO)
 
 
 AUTH = Auth()
